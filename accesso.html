@@ -189,8 +189,11 @@
             showMessage("Hai effettuato l'accesso, ma il tuo account è ancora in attesa di approvazione o non è abilitato. Puoi uscire in sicurezza; riceverai indicazioni dall'amministratrice.");
             await supabase.auth.signOut();
           } else {
-            const label = profile.display_name ? ", " + profile.display_name : "";
-            showMessage("Accesso verificato" + label + ". Ruolo: " + profile.role + ". Le credenziali sono verificate. La dashboard riservata non è ancora collegata: contatta l’amministratrice per l’attivazione delle funzioni riservate.");
+            if (profile.role === "admin") {
+              window.location.href = "dashboard.html";
+            } else {
+              showMessage("Accesso verificato. Il tuo profilo è approvato, ma la dashboard per questo ruolo non è ancora disponibile.");
+            }
           }
         }
       } catch (err) {
