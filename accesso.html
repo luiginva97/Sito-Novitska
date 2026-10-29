@@ -163,7 +163,7 @@
             await supabase.auth.signOut();
           } else {
             const label = profile.display_name ? ", " + profile.display_name : "";
-            showMessage("Accesso verificato" + label + ". Ruolo: " + profile.role + ". La pagina di accesso funziona; le altre sezioni riservate saranno disponibili quando saranno state collegate al sito.");
+            showMessage("Accesso verificato" + label + ". Ruolo: " + profile.role + ". Le credenziali sono verificate. La dashboard riservata non è ancora collegata: contatta l’amministratrice per l’attivazione delle funzioni riservate.");
           }
         }
       } catch (err) {
