@@ -6,15 +6,15 @@
   <meta name="theme-color" content="#f6f5f1">
   <title>Accesso area riservata · Khrystyna</title>
   <style>
-    :root { color-scheme: light; --ink:#20312d; --muted:#65736d; --line:#dce4de; --green:#315f50; --mint:#e9f1ec; --paper:#fff; --bg:#f6f5f1; --danger:#9c3434; }
+    :root { color-scheme: light; --ink:#0b2349; --muted:#586a8c; --line:#dbe4f3; --green:#0057b8; --mint:#e8f0fc; --paper:#fff; --bg:#f7f9fd; --danger:#a32929; }
     * { box-sizing:border-box }
-    body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
-    .shell { width:min(100%, 480px); }
-    .brand { text-align:center; margin-bottom:22px; }
+    body { margin:0; min-height:100vh; display:block; padding:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+    .shell { width:min(100%, 960px); margin:0 auto; padding:0 20px 36px; }\n    .topnav { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:18px 0 22px; }\n    .topnav b { font-size:18px; font-weight:750; }\n    .topnav a { display:inline-block; color:var(--green); background:var(--mint); border-radius:99px; padding:8px 13px; font-size:14px; font-weight:650; text-decoration:none; white-space:nowrap; }
+    .brand { text-align:left; margin:10px 0 24px; padding:30px 28px; border:1px solid var(--line); border-radius:22px; background:var(--paper); }
     .mark { display:inline-grid; place-items:center; width:54px; height:54px; border:1px solid #c7d8ce; border-radius:18px; background:var(--mint); color:var(--green); font-size:24px; margin-bottom:10px; }
-    h1 { font-size:26px; line-height:1.2; margin:0 0 7px; letter-spacing:-.5px; }
+    h1 { font-size:clamp(28px,5vw,40px); line-height:1.2; margin:0 0 7px; letter-spacing:-.8px; }
     .sub { color:var(--muted); margin:0; }
-    .card { background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:26px; box-shadow:0 12px 40px #263d3010; }
+    .card { background:var(--paper); border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:0 8px 28px #12305a0a; }
     .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; background:#f0f3ef; padding:5px; border-radius:12px; margin-bottom:22px; }
     .tab { border:0; border-radius:9px; padding:11px; background:transparent; color:var(--muted); font:inherit; cursor:pointer; }
     .tab[aria-selected="true"] { background:white; color:var(--ink); box-shadow:0 1px 4px #20312d18; font-weight:650; }
@@ -22,7 +22,7 @@
     input { display:block; width:100%; padding:13px 14px; border:1px solid #cbd6ce; border-radius:11px; background:#fff; color:var(--ink); font:inherit; }
     input:focus { outline:3px solid #315f5020; border-color:var(--green); }
     .hint { color:var(--muted); font-size:12px; margin:6px 0 0; }
-    .primary { width:100%; border:0; border-radius:11px; padding:13px 16px; background:var(--green); color:white; font:inherit; font-weight:700; cursor:pointer; margin-top:20px; }
+    .primary { width:100%; border:0; border-radius:12px; padding:13px 16px; background:var(--green); color:white; font:inherit; font-weight:750; cursor:pointer; margin-top:20px; }
     .primary:disabled { opacity:.6; cursor:wait; }
     .message { display:none; border-radius:11px; padding:12px 14px; margin-top:16px; font-size:14px; overflow-wrap:anywhere; }
     .message.show { display:block; }
@@ -33,7 +33,7 @@
     .foot { text-align:center; color:var(--muted); font-size:12px; margin:18px 8px 0; }
     .privacy { border-top:1px solid var(--line); margin-top:22px; padding-top:15px; color:var(--muted); font-size:12px; }
     [hidden] { display:none !important; }
-    @media (max-width:420px) { body { padding:16px; } .card { padding:20px; } h1 { font-size:23px; } }
+    @media (max-width:560px) { .shell { padding:0 16px 28px; } .topnav { align-items:flex-start; flex-direction:column; } .brand { padding:24px 20px; } .card { padding:20px; } }
   </style>
 </head>
 <body>
