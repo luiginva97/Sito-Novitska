@@ -101,6 +101,33 @@
     const backToLogin = document.getElementById("backToLogin");
     let mode = "login";
 
+    // Gestisce il ritorno dal link di conferma Supabase, evitando una pagina senza messaggi.
+    (async function handleAuthRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const authError = params.get("error_description") || params.get("error") ||
+        hashParams.get("error_description") || hashParams.get("error");
+      if (authError) {
+        showMessage("La conferma email non è andata a buon fine: " + authError.replace(/\\+/g, " "), "error");
+        return;
+      }
+      const isAuthReturn = params.has("code") || hashParams.has("access_token") ||
+        hashParams.get("type") === "signup" || hashParams.get("type") === "email";
+      if (!isAuthReturn) return;
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        if (data.session || hashParams.has("access_token")) {
+          showMessage("Email confermata correttamente! Ora puoi accedere con la tua email e password. Il profilo resta in attesa di approvazione da parte dell’amministratrice.");
+          history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          showMessage("Il link è stato aperto, ma non è stato possibile completare la conferma. Torna alla registrazione e richiedi una nuova email di conferma.", "error");
+        }
+      } catch (err) {
+        showMessage("Errore durante la conferma email. Richiedi una nuova email di conferma e riprova. " + (err.message || ""), "error");
+      }
+    })();
+
     function showMessage(text, type = "info") {
       message.textContent = text;
       message.className = "message show " + type;
@@ -140,7 +167,7 @@
           if (password.length < 8) throw new Error("La password deve contenere almeno 8 caratteri.");
           const { data, error } = await supabase.auth.signUp({
             email, password,
-            options: { data: { display_name: displayName } }
+            options: { data: { display_name: displayName }, emailRedirectTo: window.location.origin + "/accesso.html" }
           });
           if (error) throw error;
           if (data.session) {
