@@ -6,3 +6,5 @@ Questa repository privata contiene due applicazioni separate:
 - TurniCare: file nella cartella `/turnicare`, pubblicati su Cloudflare Pages `turnicare`.
 
 Entrambi i progetti sono collegati alla branch `main` e hanno i deployment automatici abilitati.
+
+<!-- Deployment trigger refresh -->
