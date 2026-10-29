@@ -22,7 +22,9 @@ const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,"0");
 const fmtDate=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
 const money=n=>n.toLocaleString("it-IT",{style:"currency",currency:"EUR"});
-const hours=s=>{const a=s.start_time.split(":").map(Number),b=s.end_time.split(":").map(Number);let n=b[0]*60+b[1]-a[0]*60-a[1];if(n<=0)n+=1440;return n/60};\nconst actualHours=s=>s.actual_hours!==null&&s.actual_hours!==undefined&&s.actual_hours!==""?Number(s.actual_hours):hours(s);\nconst availabilityHours=s=>s.availability_hours!==null&&s.availability_hours!==undefined&&s.availability_hours!==""?Number(s.availability_hours):0;
+const hours=s=>{const a=s.start_time.split(":").map(Number),b=s.end_time.split(":").map(Number);let n=b[0]*60+b[1]-a[0]*60-a[1];if(n<=0)n+=1440;return n/60};
+const actualHours=s=>s.actual_hours!==null&&s.actual_hours!==undefined&&s.actual_hours!==""?Number(s.actual_hours):hours(s);
+const availabilityHours=s=>s.availability_hours!==null&&s.availability_hours!==undefined&&s.availability_hours!==""?Number(s.availability_hours):0;
 const types={M:{label:"Mattina",start:"07:00",end:"14:00"},P:{label:"Pomeriggio",start:"14:00",end:"19:00"},G:{label:"Giornata",start:"07:00",end:"19:00"},N:{label:"Notte",start:"19:00",end:"07:00"}};
 let user=null,profile=null,shifts=[],collaborators=[],selectedCalendar="self",cursor=new Date(),view="month",rate=25.5*1.04,tax=.05;
 function safe(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
