@@ -46,7 +46,7 @@ async function load(){
  shifts=data||[];collaborators=(people||[]).filter(p=>["admin","nurse"].includes(p.role));render();
 }
 function estimateNurseNet(monthlyBase,months=12){
- const annualBase=Math.max(0,monthlyBase)*months,profitBase=annualBase*.78,subject=Math.max(profitBase*.16,800),integrative=Math.max(annualBase*.04,150),taxDue=Math.max(0,profitBase-subject)*.05,totalInvoice=annualBase*1.04,netAnnual=totalInvoice-subject-integrative-taxDue;
+ const annualBase=Math.max(0,monthlyBase)*months,profitBase=annualBase*.78,subject=annualBase>0?Math.max(profitBase*.16,800):0,integrative=annualBase>0?Math.max(annualBase*.04,150):0,taxDue=Math.max(0,profitBase-subject)*.05,totalInvoice=annualBase*1.04,netAnnual=totalInvoice-subject-integrative-taxDue;
  return {annualBase,profitBase,subject,integrative,taxDue,totalInvoice,netAnnual,netMonthly:months>0?netAnnual/months:0,reserve:totalInvoice-netAnnual};
 }
 function render(){
