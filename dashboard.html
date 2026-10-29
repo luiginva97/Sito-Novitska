@@ -93,11 +93,11 @@ $("delete").onclick=async()=>{const id=$("shiftId").value;if(!id||!confirm("Vuoi
 
 function icsEscape(s){return String(s??"").replace(/\\/g,"\\\\").replace(/\r?\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;")}
 function icsUnescape(s){return String(s??"").replace(/\\n/gi,"\n").replace(/\\,/g,",").replace(/\\;/g,";").replace(/\\\\/g,"\\")}
-function icsLocalStamp(date,time){return date.replace(/-/g,"")+"T"+time.replace(/:/g,"")+"00"}
+function icsLocalStamp(date,time){return date.replace(/-/g,"")+"T"+time.replace(/:/g,"")+"00"}\nfunction shiftEndDate(s){if(s.end_time.slice(0,5)>s.start_time.slice(0,5))return s.shift_date;const d=new Date(s.shift_date+"T12:00:00");d.setDate(d.getDate()+1);return fmtDate(d)}
 function exportIcs(){
  const month=cursor.getFullYear()+"-"+pad(cursor.getMonth()+1),arr=shifts.filter(s=>s.user_id===user.id&&s.shift_date.startsWith(month));
  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
- const events=arr.map(s=>["BEGIN:VEVENT","UID:"+s.id+"@infermiera.novitska.workers.dev","DTSTAMP:"+stamp,"DTSTART:"+icsLocalStamp(s.shift_date,s.start_time.slice(0,5)),"DTEND:"+icsLocalStamp(s.shift_date,s.end_time.slice(0,5)),"SUMMARY:"+icsEscape((s.code||"")+" - "+(types[s.code]?.label||"Turno")),...(s.notes?["DESCRIPTION:"+icsEscape(s.notes)]:[]),"END:VEVENT"].join("\r\n"));
+ const events=arr.map(s=>["BEGIN:VEVENT","UID:"+s.id+"@infermiera.novitska.workers.dev","DTSTAMP:"+stamp,"DTSTART:"+icsLocalStamp(s.shift_date,s.start_time.slice(0,5)),"DTEND:"+icsLocalStamp(shiftEndDate(s),s.end_time.slice(0,5)),"SUMMARY:"+icsEscape((s.code||"")+" - "+(types[s.code]?.label||"Turno")),...(s.notes?["DESCRIPTION:"+icsEscape(s.notes)]:[]),"END:VEVENT"].join("\r\n"));
  const data=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Khrystyna Novitska//Calendario turni//IT","CALSCALE:GREGORIAN","METHOD:PUBLISH",...events,"END:VCALENDAR"].join("\r\n")+"\r\n";
  const blob=new Blob([data],{type:"text/calendar;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="turni-"+month+".ics";a.click();URL.revokeObjectURL(url);
 }
