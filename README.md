@@ -7,4 +7,4 @@ Questa repository privata contiene due applicazioni separate:
 
 Entrambi i progetti sono collegati alla branch `main` e hanno i deployment automatici abilitati.
 
-<!-- Deployment trigger refresh -->
+<!-- Deployment trigger refresh: infermiera-novitska.pages.dev -->
