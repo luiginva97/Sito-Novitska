@@ -148,7 +148,7 @@ const SERVIZI=[
 document.getElementById('sv').innerHTML=SERVIZI.map(s=>`<div class="card"><div class="ic">${s[0]}</div><h3>${s[1]}</h3><p style="margin:0">${s[2]}</p></div>`).join('');
 document.getElementById('tf').innerHTML='<table style="width:100%;border-collapse:collapse;min-width:300px">'+SERVIZI.map(s=>`<tr style="border-bottom:1px solid var(--line)"><td style="padding:12px 4px">${s[0]} <b>${s[1]}</b><br><small style="color:var(--mut)">${s[2]}</small></td><td style="padding:12px 4px;text-align:right;white-space:nowrap" class="price">${s[3]} €<br><small>${s[4]}</small></td></tr>`).join('')+'</table>';
 
-const PIVA='';if(PIVA)document.querySelectorAll('.piva').forEach(e=>e.textContent='P. IVA '+PIVA+' ·');
+const PIVA='14823640967';if(PIVA)document.querySelectorAll('.piva').forEach(e=>e.textContent='P. IVA '+PIVA+' ·');
 /* ---------- AREA RISERVATA ---------- */
 const RATE=25.5*1.04,TAX=.22;
 const T={M:['07:00','14:00','Mattina','#d99a12'],P:['14:00','19:00','Pomeriggio','#3b8fe0'],G:['07:00','19:00','Giornata','#1fa88f'],N:['19:00','07:00','Notte','#7a5ce0']};
