@@ -1,8 +1,7 @@
 # Nano Shift
 
-Applicazione separata per la gestione personale dei turni, dei compensi e delle simulazioni fiscali.
+App per la gestione e pianificazione dei turni.
 
-Deploy Cloudflare Pages: `shiftcare.pages.dev`.
-
+Deploy Cloudflare Pages: `https://shiftcare.pages.dev` (URL tecnico attuale; il nome visibile nell'app è Nano Shift).
 
 Brand update: Nano Shift app.
