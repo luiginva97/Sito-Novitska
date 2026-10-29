@@ -1,7 +1,7 @@
-# Nano Shift
+# NaNo Shift
 
 App per la gestione e pianificazione dei turni.
 
-Deploy Cloudflare Pages: `https://shiftcare.pages.dev` (URL tecnico attuale; il nome visibile nell'app è Nano Shift).
+Deploy Cloudflare Pages: `https://shiftcare.pages.dev` (URL tecnico attuale; il nome visibile nell'app è NaNo Shift).
 
-Brand update: Nano Shift app.
+Brand update: NaNo Shift app.
