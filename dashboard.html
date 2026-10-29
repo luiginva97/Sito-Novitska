@@ -36,9 +36,10 @@ async function init(){
  await load();
 }
 async function load(){
- $("app").innerHTML='<div class="panel">Caricamento turni…</div>';
+ const monthStart=cursor.getFullYear()+"-"+pad(cursor.getMonth()+1)+"-01";
+ const monthEnd=fmtDate(new Date(cursor.getFullYear(),cursor.getMonth()+1,1));
  const [{data,error},{data:people}]=await Promise.all([
-   sb.from("shifts").select("*").order("shift_date").order("start_time"),
+   sb.from("shifts").select("*").gte("shift_date",monthStart).lt("shift_date",monthEnd).order("shift_date").order("start_time"),
    sb.from("profiles").select("id,display_name,role,approval_status").eq("approval_status","approved")
  ]);
  if(error){$("app").innerHTML='<div class="panel"><h2>Non riesco a caricare i turni</h2><p class="muted">'+safe(error.message)+'</p><button class="btn" onclick="load()">Riprova</button></div>';return}
@@ -69,7 +70,7 @@ function calculateTax(){
  $("taxResults").innerHTML=items.map(x=>'<div class="stat"><span>'+x[0]+'</span><strong style="font-size:20px">'+eur(x[1])+'</strong></div>').join("");
  $("taxNotes").textContent="Reddito forfettario stimato (78%): "+eur(base)+". Base imposta dopo contributo soggettivo stimato: "+eur(taxBase)+". Il 4% in fattura è incassato dal cliente ma va accantonato per ENPAPI, non è guadagno disponibile. Il minimo soggettivo può essere ridotto del 50% nei primi quattro anni di iscrizione se ne ricorrono le condizioni e viene richiesto. Simulazione indicativa: verifica importi e deduzioni con ENPAPI/commercialista.";
 }
-function move(n){cursor=new Date(cursor.getFullYear(),cursor.getMonth()+n,1);render()}
+function move(n){cursor=new Date(cursor.getFullYear(),cursor.getMonth()+n,1);load()}
 function drawCalendar(){
  const host=$("calendar");if(view==="list"){host.innerHTML='<p class="muted">Visualizzazione elenco selezionata: i turni sono riportati qui sotto.</p>';return}
  const y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1),offset=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate(),today=fmtDate(new Date()),owner=selectedCalendar==="self"?user.id:selectedCalendar,visible=shifts.filter(s=>owner==="all"||s.user_id===owner);
@@ -93,7 +94,8 @@ $("delete").onclick=async()=>{const id=$("shiftId").value;if(!id||!confirm("Vuoi
 
 function icsEscape(s){return String(s??"").replace(/\\/g,"\\\\").replace(/\r?\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;")}
 function icsUnescape(s){return String(s??"").replace(/\\n/gi,"\n").replace(/\\,/g,",").replace(/\\;/g,";").replace(/\\\\/g,"\\")}
-function icsLocalStamp(date,time){return date.replace(/-/g,"")+"T"+time.replace(/:/g,"")+"00"}\nfunction shiftEndDate(s){if(s.end_time.slice(0,5)>s.start_time.slice(0,5))return s.shift_date;const d=new Date(s.shift_date+"T12:00:00");d.setDate(d.getDate()+1);return fmtDate(d)}
+function icsLocalStamp(date,time){return date.replace(/-/g,"")+"T"+time.replace(/:/g,"")+"00"}
+function shiftEndDate(s){if(s.end_time.slice(0,5)>s.start_time.slice(0,5))return s.shift_date;const d=new Date(s.shift_date+"T12:00:00");d.setDate(d.getDate()+1);return fmtDate(d)}
 function exportIcs(){
  const month=cursor.getFullYear()+"-"+pad(cursor.getMonth()+1),arr=shifts.filter(s=>s.user_id===user.id&&s.shift_date.startsWith(month));
  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
@@ -103,7 +105,7 @@ function exportIcs(){
 }
 function parseIcsDate(value){
  const m=String(value||"").match(/^(\d{4})(\d{2})(\d{2})T?(\d{2})?(\d{2})?(\d{2})?(Z)?$/);if(!m)return null;
- if(!m[4])return null;
+ if(!m[4])return {date:m[1]+"-"+m[2]+"-"+m[3],time:null};
  if(m[7]){const d=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5],+(m[6]||0)));return {date:fmtDate(d),time:pad(d.getHours())+":"+pad(d.getMinutes())}}
  return {date:m[1]+"-"+m[2]+"-"+m[3],time:m[4]+":"+m[5]};
 }
@@ -112,18 +114,19 @@ async function importIcs(text){
  for(const line of unfolded){if(line.trim().toUpperCase()==="BEGIN:VEVENT"){ev={};continue}if(line.trim().toUpperCase()==="END:VEVENT"){if(ev)events.push(ev);ev=null;continue}if(!ev)continue;const idx=line.indexOf(":");if(idx<0)continue;const key=line.slice(0,idx).split(";")[0].toUpperCase(),val=line.slice(idx+1);if(["DTSTART","DTEND","SUMMARY","DESCRIPTION"].includes(key))ev[key]=val}
  const arr=[];
  for(const ev of events){
-  const start=parseIcsDate(ev.DTSTART),end=parseIcsDate(ev.DTEND);if(!start||!end)continue;
+  const start=parseIcsDate(ev.DTSTART),end=parseIcsDate(ev.DTEND);if(!start)continue;
   const summary=icsUnescape(ev.SUMMARY||"").toUpperCase(),desc=icsUnescape(ev.DESCRIPTION||"");
   let code=(summary.match(/(?:^|[^A-Z])([MPGN])(?:[^A-Z]|$)/)||[])[1];
   if(!code){if(/MATTINA/.test(summary))code="M";else if(/POMERIGGIO/.test(summary))code="P";else if(/GIORNATA/.test(summary))code="G";else if(/NOTTE/.test(summary))code="N"}
   if(!code||!types[code])continue;
-  arr.push({user_id:user.id,shift_date:start.date,code,start_time:start.time,end_time:end.time,notes:desc.slice(0,250)});
+  arr.push({user_id:user.id,shift_date:start.date,code,start_time:start.time||types[code].start,end_time:end?.time||types[code].end,notes:desc.slice(0,250)});
  }
  if(!arr.length){alert("Non ho trovato eventi compatibili. Il file deve contenere eventi con data, ora di inizio/fine e un tipo di turno (M, P, G o N) nel titolo.");return}
  if(!confirm("Importare "+arr.length+" turni dal file .ics? I turni già presenti non vengono eliminati; potrebbero esserci duplicati."))return;
  const {error}=await sb.from("shifts").insert(arr);if(error)alert("Importazione non riuscita: "+error.message);else{alert("Importati "+arr.length+" turni dal file .ics.");await load()}
 }
-\nfunction exportCsv(){const month=cursor.getFullYear()+"-"+pad(cursor.getMonth()+1),arr=shifts.filter(s=>s.shift_date.startsWith(month)),lines=["data;turno;dalle;alle;note;ore;lordo stimato;residuo stimato",...arr.map(s=>[s.shift_date,s.code,s.start_time.slice(0,5),s.end_time.slice(0,5),s.notes,hours(s).toFixed(2), (hours(s)*rate).toFixed(2),(hours(s)*rate*(1-tax)).toFixed(2)].join(";"))];const blob=new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="turni-"+month+".csv";a.click();URL.revokeObjectURL(url)}
+
+function exportCsv(){const month=cursor.getFullYear()+"-"+pad(cursor.getMonth()+1),arr=shifts.filter(s=>s.shift_date.startsWith(month)),lines=["data;turno;dalle;alle;note;ore;lordo stimato;residuo stimato",...arr.map(s=>[s.shift_date,s.code,s.start_time.slice(0,5),s.end_time.slice(0,5),s.notes,hours(s).toFixed(2), (hours(s)*rate).toFixed(2),(hours(s)*rate*(1-tax)).toFixed(2)].join(";"))];const blob=new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="turni-"+month+".csv";a.click();URL.revokeObjectURL(url)}
 async function bulkAdd(){const raw=prompt("Inserisci turni per il mese visualizzato. Esempio: 1M 2P 3-5G 10N");if(!raw)return;const y=cursor.getFullYear(),m=cursor.getMonth()+1,n=new Date(y,m,0).getDate(),re=/(\d{1,2})(?:\s*-\s*(\d{1,2}))?\s*([MPGN])/gi,arr=[];let x;while((x=re.exec(raw))){for(let d=+x[1];d<=Math.min(+(x[2]||x[1]),n);d++){const code=x[3].toUpperCase();arr.push({user_id:user.id,shift_date:y+"-"+pad(m)+"-"+pad(d),code,start_time:types[code].start,end_time:types[code].end,notes:""})}}if(!arr.length){alert("Non ho trovato turni. Esempio: 1M 2P 3-5G 10N");return}const {error}=await sb.from("shifts").insert(arr);if(error)alert("Importazione non riuscita: "+error.message);else{alert("Inseriti "+arr.length+" turni.");await load()}}
 async function importCsv(text){const rows=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),arr=[];for(const line of rows){const p=line.split(/[;,\t]/).map(x=>x.trim()),date=p[0],code=(p[1]||"").toUpperCase();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!types[code])continue;arr.push({user_id:user.id,shift_date:date,code,start_time:/^\d{1,2}:\d{2}$/.test(p[2]||"")?p[2]:types[code].start,end_time:/^\d{1,2}:\d{2}$/.test(p[3]||"")?p[3]:types[code].end,notes:p[4]||""})}if(!arr.length){alert("Nessuna riga valida. Formato: 2026-11-03;M;07:00;14:00;note");return}const {error}=await sb.from("shifts").insert(arr);if(error)alert("Importazione non riuscita: "+error.message);else{alert("Importati "+arr.length+" turni.");await load()}}
 $("logout").onclick=async()=>{await sb.auth.signOut();location.href="accesso.html"};
