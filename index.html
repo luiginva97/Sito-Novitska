@@ -222,7 +222,7 @@ let mine=[],fr={},names={},view='month',cur=new Date(),showF=true,share=false,la
 const col=()=>db.collection('data/users/'+uid);
 const put=(d,c,s,e)=>col().doc('s_'+d+'_'+c).set({date:d,code:c,start:s,end:e});
 const fcol=u=>PAL[Object.keys(fr).sort().indexOf(u)%PAL.length];
-const NAVH='<a class="hm" href="#chi-sono">Chi sono</a><a class="hm" href="#servizi">Servizi</a><a class="hm" href="#tariffario">Tariffe</a><a class="hm" href="#contatti">Contatti</a><a class="ar" href="accesso.html">🔒 Area riservata</a>';
+const NAVH='<a class="hm" href="#chi-sono">Chi sono</a><a class="hm" href="#servizi">Servizi</a><a class="hm" href="#tariffario">Tariffe</a><a class="hm" href="#contatti">Contatti</a>';
 
 async function openAdmin(){
   S.hidden=true;A.hidden=false;NL.innerHTML='<a class="ar" href="#">← Torna al sito</a>';
