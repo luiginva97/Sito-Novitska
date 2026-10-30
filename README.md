@@ -1,10 +1,5 @@
-# Sito infermieristico e NaNo Shift
+# Sito infermieristico
 
-Questa repository privata contiene due applicazioni separate:
+Repository privata del sito personale e professionale di Khrystyna Novitska.
 
-- Sito pubblico personale: file nella root della repository, pubblicato su Cloudflare Pages `infermiera-novitska`.
-- NaNo Shift: file nella cartella `/shiftcare`, pubblicati sul progetto Cloudflare Pages `shiftcare` (slug tecnico invariato).
-
-Entrambi i progetti sono collegati alla branch `main` e hanno i deployment automatici abilitati.
-
-<!-- Deployment trigger refresh: NaNo Shift -->
+Il sito è pubblicato su Cloudflare Pages dal contenuto della root della repository. L'applicazione NaNo Shift è mantenuta separatamente nella repository [NaNo-Shift](https://github.com/khrystynanovitska/NaNo-Shift).
