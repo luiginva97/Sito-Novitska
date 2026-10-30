@@ -1,5 +1,5 @@
 # Deployment
 
-The personal nursing website is deployed from the repository root to Cloudflare Pages project `infermiera-novitska`.
-The ShiftCare app is deployed from `/shiftcare` to Cloudflare Pages project `shiftcare`.
-Both projects use the same private GitHub repository and production branch `main`, with path filters to keep deployments separate.
+Il sito infermieristico personale viene pubblicato da Cloudflare Pages utilizzando la root di questa repository e la branch `main`.
+
+L'applicazione NaNo Shift è gestita in una repository GitHub separata: `khrystynanovitska/NaNo-Shift`.
